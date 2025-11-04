@@ -1,0 +1,61 @@
+# Rustfmt configuration for ICOokForms
+# Ensures consistent code formatting across the project
+
+# Edition
+edition = "2021"
+
+# Maximum line width
+max_width = 100
+
+# Hard tabs or spaces
+hard_tabs = false
+tab_spaces = 4
+
+# Newlines
+newline_style = "Auto"
+
+# Imports
+imports_granularity = "Crate"
+group_imports = "StdExternalCrate"
+reorder_imports = true
+reorder_modules = true
+
+# Use small heuristics
+use_small_heuristics = "Default"
+
+# Function formatting
+fn_single_line = false
+where_single_line = false
+
+# Control flow
+control_brace_style = "AlwaysSameLine"
+brace_style = "SameLineWhere"
+
+# Chains
+chain_width = 60
+force_multiline_blocks = false
+
+# Comments
+comment_width = 80
+wrap_comments = true
+normalize_comments = true
+normalize_doc_attributes = true
+
+# Match
+match_arm_blocks = true
+match_block_trailing_comma = false
+
+# Overflow
+overflow_delimited_expr = false
+use_try_shorthand = true
+
+# Misc
+remove_nested_parens = true
+reorder_impl_items = true
+format_strings = false
+format_macro_matchers = true
+format_macro_bodies = true
+
+# Unstable features (require nightly)
+# unstable_features = true
+# format_code_in_doc_comments = true

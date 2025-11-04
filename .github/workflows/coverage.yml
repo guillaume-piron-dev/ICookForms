@@ -1,0 +1,215 @@
+name: Code Coverage
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+      
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+      
+      - name: Cache cargo index
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-git-${{ hashFiles('**/Cargo.lock') }}
+      
+      - name: Cache cargo build
+        uses: actions/cache@v3
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+      
+      - name: Install cargo-tarpaulin
+        run: cargo install cargo-tarpaulin
+      
+      - name: Generate code coverage (XML for Codecov/Coveralls)
+        run: |
+          cargo tarpaulin \
+            --verbose \
+            --all-features \
+            --workspace \
+            --timeout 300 \
+            --out Xml \
+            --output-dir ./coverage
+      
+      - name: Generate code coverage (HTML for artifacts)
+        run: |
+          cargo tarpaulin \
+            --verbose \
+            --all-features \
+            --workspace \
+            --timeout 300 \
+            --out Html \
+            --output-dir ./coverage/html
+      
+      - name: Generate code coverage (Lcov for Coveralls)
+        run: |
+          cargo tarpaulin \
+            --verbose \
+            --all-features \
+            --workspace \
+            --timeout 300 \
+            --out Lcov \
+            --output-dir ./coverage
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/cobertura.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+          verbose: true
+      
+      - name: Upload coverage to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ./coverage/lcov.info
+          flag-name: Unit
+          parallel: false
+      
+      - name: Archive HTML coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-html-report
+          path: ./coverage/html
+      
+      - name: Archive XML coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-xml-report
+          path: ./coverage/cobertura.xml
+      
+      - name: Generate coverage summary
+        run: |
+          echo "## 📊 Code Coverage Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Coverage reports have been generated and uploaded to:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Codecov:** Check the PR/commit for detailed coverage" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Coveralls:** Coverage trends and analysis" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **HTML Report:** Downloadable artifact with detailed coverage" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Extract coverage percentage if available
+          if [ -f ./coverage/cobertura.xml ]; then
+            COVERAGE=$(grep -oP 'line-rate="\K[0-9.]+' ./coverage/cobertura.xml | head -1)
+            if [ -n "$COVERAGE" ]; then
+              PERCENTAGE=$(echo "$COVERAGE * 100" | bc)
+              PERCENTAGE_INT=$(echo "$PERCENTAGE / 1" | bc)
+              echo "### Coverage: ${PERCENTAGE_INT}% 📈" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              
+              # Add badge
+              if [ "$PERCENTAGE_INT" -ge 90 ]; then
+                echo "🟢 **Excellent coverage!**" >> $GITHUB_STEP_SUMMARY
+              elif [ "$PERCENTAGE_INT" -ge 75 ]; then
+                echo "🟡 **Good coverage**" >> $GITHUB_STEP_SUMMARY
+              elif [ "$PERCENTAGE_INT" -ge 60 ]; then
+                echo "🟠 **Moderate coverage**" >> $GITHUB_STEP_SUMMARY
+              else
+                echo "🔴 **Coverage needs improvement**" >> $GITHUB_STEP_SUMMARY
+              fi
+            fi
+          fi
+  
+  benchmark:
+    name: Performance Benchmarks
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+      
+      - name: Cache cargo index
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-git-${{ hashFiles('**/Cargo.lock') }}
+      
+      - name: Cache cargo build
+        uses: actions/cache@v3
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-bench-target-${{ hashFiles('**/Cargo.lock') }}
+      
+      - name: Run benchmarks
+        run: |
+          cargo bench --all-features -- --output-format bencher | tee benchmark_results.txt || true
+          
+          # If no benchmarks, create a placeholder
+          if [ ! -s benchmark_results.txt ]; then
+            echo "No benchmarks found or benchmarks failed" > benchmark_results.txt
+          fi
+      
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v3
+        with:
+          name: benchmark-results
+          path: benchmark_results.txt
+      
+      - name: Generate benchmark summary
+        run: |
+          echo "## ⚡ Benchmark Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -s benchmark_results.txt ] && ! grep -q "No benchmarks" benchmark_results.txt; then
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            head -50 benchmark_results.txt >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "📦 Full results available in artifacts" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ No benchmarks available or benchmarks failed" >> $GITHUB_STEP_SUMMARY
+          fi
+  
+  summary:
+    name: Coverage & Benchmarks Summary
+    runs-on: ubuntu-latest
+    needs: [coverage, benchmark]
+    if: always()
+    
+    steps:
+      - name: Generate final summary
+        run: |
+          echo "## ✅ Coverage & Performance Analysis Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Coverage Job:** ${{ needs.coverage.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Benchmark Job:** ${{ needs.benchmark.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Available Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "- HTML Coverage Report" >> $GITHUB_STEP_SUMMARY
+          echo "- XML Coverage Report" >> $GITHUB_STEP_SUMMARY
+          echo "- Benchmark Results" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,230 @@
+//! PDF report generation
+//!
+//! Generate professional PDF reports using printpdf
+
+use crate::types::{AnalysisResult, Result};
+use printpdf::{BuiltinFont, Mm, PdfDocument};
+use std::fs::File;
+use std::io::BufWriter;
+use std::path::Path;
+
+/// Generate PDF report and save to file
+#[allow(clippy::too_many_lines)]
+pub fn generate(results: &AnalysisResult, output_path: &Path) -> Result<()> {
+    // Create PDF document
+    let (doc, page1, layer1) = PdfDocument::new(
+        "ICOokForms Cookie Analysis Report",
+        Mm(210.0), // A4 width
+        Mm(297.0), // A4 height
+        "Layer 1",
+    );
+
+    let current_layer = doc.get_page(page1).get_layer(layer1);
+
+    // Set up fonts
+    let font = doc.add_builtin_font(BuiltinFont::Helvetica)?;
+    let font_bold = doc.add_builtin_font(BuiltinFont::HelveticaBold)?;
+
+    // Title
+    let title_size = 24.0;
+    current_layer.use_text(
+        "ICOokForms Cookie Analysis Report",
+        title_size,
+        Mm(20.0),
+        Mm(270.0),
+        &font_bold,
+    );
+
+    // Metadata
+    let mut y_pos = 260.0;
+    let normal_size = 10.0;
+
+    current_layer.use_text(
+        format!("Analysis ID: {}", results.id).as_str(),
+        normal_size,
+        Mm(20.0),
+        Mm(y_pos),
+        &font,
+    );
+    y_pos -= 5.0;
+
+    current_layer.use_text(
+        format!("Scan ID: {}", results.scan_id).as_str(),
+        normal_size,
+        Mm(20.0),
+        Mm(y_pos),
+        &font,
+    );
+    y_pos -= 5.0;
+
+    current_layer.use_text(
+        format!(
+            "Date: {date}",
+            date = results.analyzed_at.format("%Y-%m-%d %H:%M:%S UTC")
+        )
+        .as_str(),
+        normal_size,
+        Mm(20.0),
+        Mm(y_pos),
+        &font,
+    );
+    y_pos -= 10.0;
+
+    // Scores section
+    current_layer.use_text("Scores", 14.0, Mm(20.0), Mm(y_pos), &font_bold);
+    y_pos -= 7.0;
+
+    current_layer.use_text(
+        format!("Risk Score: {score:.1}/100", score = results.risk_score).as_str(),
+        normal_size,
+        Mm(20.0),
+        Mm(y_pos),
+        &font,
+    );
+    y_pos -= 5.0;
+
+    current_layer.use_text(
+        format!(
+            "Compliance Score: {score:.1}/100",
+            score = results.compliance_score
+        )
+        .as_str(),
+        normal_size,
+        Mm(20.0),
+        Mm(y_pos),
+        &font,
+    );
+    y_pos -= 5.0;
+
+    current_layer.use_text(
+        format!(
+            "Privacy Score: {score:.1}/100",
+            score = results.privacy_score
+        )
+        .as_str(),
+        normal_size,
+        Mm(20.0),
+        Mm(y_pos),
+        &font,
+    );
+    y_pos -= 10.0;
+
+    // Summary section
+    current_layer.use_text("Summary", 14.0, Mm(20.0), Mm(y_pos), &font_bold);
+    y_pos -= 7.0;
+
+    let summary_items = vec![
+        format!("Total Cookies: {}", results.summary.total_cookies),
+        format!("First-Party: {}", results.summary.first_party_cookies),
+        format!("Third-Party: {}", results.summary.third_party_cookies),
+        format!("Session Cookies: {}", results.summary.session_cookies),
+        format!("Persistent Cookies: {}", results.summary.persistent_cookies),
+        format!("Secure Cookies: {}", results.summary.secure_cookies),
+        format!("HttpOnly Cookies: {}", results.summary.http_only_cookies),
+        format!("SameSite Cookies: {}", results.summary.same_site_cookies),
+        format!("Total Issues: {}", results.summary.total_issues),
+    ];
+
+    for item in summary_items {
+        current_layer.use_text(&item, normal_size, Mm(20.0), Mm(y_pos), &font);
+        y_pos -= 5.0;
+    }
+
+    y_pos -= 5.0;
+
+    // Issues section
+    if !results.issues.is_empty() {
+        current_layer.use_text(
+            format!("Issues ({count})", count = results.issues.len()).as_str(),
+            14.0,
+            Mm(20.0),
+            Mm(y_pos),
+            &font_bold,
+        );
+        y_pos -= 7.0;
+
+        for (i, issue) in results.issues.iter().take(10).enumerate() {
+            // Limit to first 10 issues to fit on page
+            if y_pos < 30.0 {
+                break; // Stop if we're too close to bottom
+            }
+
+            current_layer.use_text(
+                format!(
+                    "{num}. [{severity}] {title}",
+                    num = i + 1,
+                    severity = issue.severity,
+                    title = truncate(&issue.title, 60)
+                )
+                .as_str(),
+                normal_size - 1.0,
+                Mm(20.0),
+                Mm(y_pos),
+                &font,
+            );
+            y_pos -= 4.0;
+        }
+
+        if results.issues.len() > 10 {
+            current_layer.use_text(
+                format!(
+                    "... and {more} more issues",
+                    more = results.issues.len() - 10
+                )
+                .as_str(),
+                normal_size - 1.0,
+                Mm(20.0),
+                Mm(y_pos),
+                &font,
+            );
+        }
+    }
+
+    // Footer
+    current_layer.use_text(
+        "Generated by ICOokForms - The World's Reference Cookie Audit Software",
+        8.0,
+        Mm(20.0),
+        Mm(15.0),
+        &font,
+    );
+
+    // Save PDF
+    let file = File::create(output_path)?;
+    doc.save(&mut BufWriter::new(file))?;
+
+    Ok(())
+}
+
+/// Truncate string to max length
+fn truncate(s: &str, max_len: usize) -> String {
+    if s.len() <= max_len {
+        s.to_string()
+    } else {
+        format!("{}...", &s[..max_len - 3])
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tempfile::NamedTempFile;
+
+    #[test]
+    fn test_truncate() {
+        assert_eq!(truncate("short", 10), "short");
+        assert_eq!(truncate("this is a very long string", 10), "this is...");
+    }
+
+    #[test]
+    fn test_generate_file() {
+        let results = AnalysisResult::new("test-scan");
+        let temp_file = NamedTempFile::new().unwrap();
+        let result = generate(&results, temp_file.path());
+        assert!(result.is_ok());
+
+        // Verify file was created and has content
+        let metadata = std::fs::metadata(temp_file.path()).unwrap();
+        assert!(metadata.len() > 0);
+    }
+}

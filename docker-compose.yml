@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  icookforms:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: icookforms
+    image: icookforms:latest
+    
+    # Volumes for persistent data and reports
+    volumes:
+      - ./data:/app/data
+      - ./reports:/app/reports
+    
+    # Environment variables
+    environment:
+      - RUST_LOG=info
+      - ICOOKFORMS_DATA_DIR=/app/data
+      - ICOOKFORMS_REPORTS_DIR=/app/reports
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Default command (override with docker-compose run)
+    command: ["--help"]
+  
+  # Database service for storing scan results (optional)
+  database:
+    image: postgres:15-alpine
+    container_name: icookforms-db
+    environment:
+      POSTGRES_DB: icookforms
+      POSTGRES_USER: icookforms
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U icookforms"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local
+
+# Usage examples:
+#
+# Build the image:
+#   docker-compose build
+#
+# Scan a website:
+#   docker-compose run --rm icookforms scan https://example.com
+#
+# Scan and generate JSON report:
+#   docker-compose run --rm icookforms scan https://example.com --output /app/reports/report.json
+#
+# Scan with compliance check:
+#   docker-compose run --rm icookforms scan https://example.com --compliance gdpr
+#
+# Run interactive shell:
+#   docker-compose run --rm icookforms sh
+#
+# Start database only:
+#   docker-compose up -d database
+#
+# View logs:
+#   docker-compose logs -f icookforms
+#
+# Stop all services:
+#   docker-compose down
+#
+# Remove all data:
+#   docker-compose down -v
