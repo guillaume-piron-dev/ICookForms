@@ -1,0 +1,93 @@
+# Rust
+/target/
+**/*.rs.bk
+*.pdb
+Cargo.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+/dist/
+/build/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test artifacts
+*.profraw
+*.profdata
+
+# Documentation
+/book/
+/doc/
+/target/doc/
+
+# Benchmarks
+/target/criterion/
+/benches/target/
+flamegraph.svg
+perf.data*
+*.folded
+
+# Coverage
+/coverage/
+tarpaulin-report.html
+cobertura.xml
+lcov.info
+*.profdata
+*.profraw
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# CI/CD
+.github/workflows/*.log
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+.directory
+
+# Project specific
+/output/
+/reports/
+/scans/
+/data/
+
+# Cargo publish
+*.crate
+Cargo.lock
