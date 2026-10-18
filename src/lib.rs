@@ -54,7 +54,7 @@
 //!     
 //!     // Analyze cookies for security and compliance
 //!     let analyzer = Analyzer::new();
-//!     let results = analyzer.analyze(&scan_result.cookies)?;
+//!     let results = analyzer.analyze_batch(&scan_result.cookies);
 //!     
 //!     // Print summary
 //!     println!("Found {} cookies", scan_result.cookies.len());
@@ -100,6 +100,8 @@
 #![allow(clippy::module_name_repetitions)]
 #![allow(clippy::missing_errors_doc)]
 #![allow(clippy::missing_panics_doc)]
+// Test assertions: `assert!(x.is_empty())` reads better than `assert_eq!(x, [] as [T; 0])`
+#![cfg_attr(test, allow(clippy::assert_is_empty))]
 
 // Public modules
 pub mod analyzer;

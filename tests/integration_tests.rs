@@ -100,7 +100,7 @@ fn test_scan_result_creation() {
 fn test_analysis_result_creation() {
     let analysis = AnalysisResult::new("test-scan-id");
     assert_eq!(analysis.scan_id, "test-scan-id");
-    assert!(analysis.id.len() > 0);
+    assert!(!analysis.id.is_empty());
 }
 
 // ============================================================================

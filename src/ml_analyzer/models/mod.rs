@@ -40,12 +40,3 @@ pub mod lstm {
     //! - Prediction generation
     //! - Anomaly detection in time series
 }
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn test_models_module() {
-        // Placeholder test
-        assert!(true);
-    }
-}

@@ -294,7 +294,7 @@ mod property_tests {
 
             let csv_str = result.unwrap();
             let lines: Vec<_> = csv_str.lines().collect();
-            assert!(lines.len() >= 1, "CSV should have at least header row");
+            assert!(!lines.is_empty(), "CSV should have at least header row");
         }
     }
 

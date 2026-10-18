@@ -27,6 +27,7 @@ type HmacSha512 = Hmac<Sha512>;
 ///
 /// # Example
 /// ```
+/// # use icookforms::utils::crypto::sha256;
 /// let hash = sha256(b"test data");
 /// assert_eq!(hash.len(), 64); // SHA-256 produces 32 bytes = 64 hex chars
 /// ```
@@ -64,8 +65,9 @@ pub fn sha512(data: &[u8]) -> String {
 ///
 /// # Example
 /// ```
+/// # use icookforms::utils::crypto::hmac_sha256;
 /// let hmac = hmac_sha256(b"secret_key", b"message").unwrap();
-/// // Verify signature matches
+/// assert_eq!(hmac.len(), 64);
 /// ```
 pub fn hmac_sha256(key: &[u8], data: &[u8]) -> Result<String> {
     let mut mac = HmacSha256::new_from_slice(key)
@@ -221,7 +223,9 @@ pub fn generate_random_bytes(length: usize) -> Vec<u8> {
 ///
 /// # Example
 /// ```
-/// let token = generate_secure_token(32); // 64 hex characters
+/// # use icookforms::utils::crypto::generate_secure_token;
+/// let token = generate_secure_token(32);
+/// assert_eq!(token.len(), 64);
 /// ```
 #[must_use]
 pub fn generate_secure_token(byte_length: usize) -> String {

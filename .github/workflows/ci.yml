@@ -31,19 +31,19 @@ jobs:
           components: rustfmt, clippy
       
       - name: Cache cargo registry
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cargo/registry
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
       
       - name: Cache cargo index
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cargo/git
           key: ${{ runner.os }}-cargo-git-${{ hashFiles('**/Cargo.lock') }}
       
       - name: Cache cargo build
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: target
           key: ${{ runner.os }}-${{ matrix.rust }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
@@ -90,10 +90,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
-      - name: Install Rust 1.70 (MSRV)
+      - name: Install Rust 1.83 (MSRV)
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: "1.70"
+          toolchain: "1.83"
       
       - name: Check MSRV compatibility
         run: cargo check --all-features
@@ -141,7 +141,7 @@ jobs:
         run: strip target/${{ matrix.target }}/release/icookforms
       
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
           path: |

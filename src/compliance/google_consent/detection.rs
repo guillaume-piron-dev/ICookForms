@@ -95,9 +95,10 @@ pub struct GoogleConsentData {
 }
 
 /// Source of consent information
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub enum ConsentSource {
     /// No consent information found
+    #[default]
     None,
 
     /// Consent found in cookies only
@@ -108,12 +109,6 @@ pub enum ConsentSource {
 
     /// Consent found in both cookies and URL
     Both,
-}
-
-impl Default for ConsentSource {
-    fn default() -> Self {
-        Self::None
-    }
 }
 
 impl GoogleConsentAnalysis {

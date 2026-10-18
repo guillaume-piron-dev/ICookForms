@@ -15,7 +15,7 @@
 //! # Example
 //!
 //! ```rust
-//! use icook_forms::compliance::iab_tcf::{DisclosedVendors, VendorSet};
+//! use icookforms::compliance::iab_tcf::{DisclosedVendors, VendorSet};
 //! use std::collections::HashSet;
 //!
 //! // Create disclosed vendors segment
@@ -46,6 +46,7 @@ impl SegmentUtils {
     /// # Example
     ///
     /// ```rust
+    /// # use icookforms::compliance::iab_tcf::SegmentUtils;
     /// let vendors = vec![1, 2, 3, 35, 41];
     /// let disclosed = SegmentUtils::create_disclosed_vendors(&vendors);
     /// ```

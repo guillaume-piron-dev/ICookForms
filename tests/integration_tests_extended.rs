@@ -22,7 +22,7 @@ fn test_complete_workflow_end_to_end() {
     let mut scan = ScanResult::new("https://example.com");
 
     // 2. Parse cookies from Set-Cookie headers
-    let cookie_strings = vec![
+    let cookie_strings = [
         "session=abc123; Secure; HttpOnly; SameSite=Strict",
         "tracking=xyz; Domain=.example.com; Max-Age=31536000",
         "_ga=GA1.2.123456789.987654321",
@@ -195,7 +195,7 @@ fn test_session_hijacking_detection() {
     let result = analyzer.analyze(&cookie);
 
     // Should detect multiple security issues
-    assert!(result.security_issues.len() > 0);
+    assert!(!result.security_issues.is_empty());
 }
 
 // ============================================================================
@@ -319,9 +319,9 @@ fn test_unicode_cookie_handling() {
     for cookie_str in unicode_cookies {
         let result = parse_set_cookie(cookie_str, false);
         // Should handle unicode gracefully
-        match result {
-            Ok(cookie) => assert!(!cookie.name.is_empty()),
-            Err(_) => {} // May reject non-ASCII, which is acceptable
+        // May reject non-ASCII, which is acceptable
+        if let Ok(cookie) = result {
+            assert!(!cookie.name.is_empty());
         }
     }
 }

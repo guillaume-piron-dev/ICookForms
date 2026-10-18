@@ -204,7 +204,7 @@ impl CookieTimeline {
         let mut events = Self::cookies_to_events(cookies);
 
         // Sort chronologically
-        events.sort_by(|a, b| a.timestamp.cmp(&b.timestamp));
+        events.sort_by_key(|a| a.timestamp);
 
         // Calculate time bounds
         let start_time = events.first().map_or_else(Utc::now, |e| e.timestamp);

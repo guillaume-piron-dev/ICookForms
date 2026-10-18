@@ -104,12 +104,12 @@ impl CookiePattern {
         let name_match = self
             .name_regex
             .as_ref()
-            .map_or(true, |regex| cookie.name.contains(regex));
+            .is_none_or(|regex| cookie.name.contains(regex));
 
         let value_match = self
             .value_regex
             .as_ref()
-            .map_or(true, |regex| cookie.value.contains(regex));
+            .is_none_or(|regex| cookie.value.contains(regex));
 
         name_match && value_match
     }

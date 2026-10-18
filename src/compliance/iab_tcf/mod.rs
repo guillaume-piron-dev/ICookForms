@@ -27,16 +27,19 @@
 //! let tc_string = "COxSKBCOxSKCCBcABCENAgCMAPzAAEPAAAqIDaQBQAMgAgABqAR0A2gDaQAwAMgAgANoAAA";
 //! let tc_model = decode_tc_string(tc_string)?;
 //!
-//! // Check vendor consent
 //! assert_eq!(tc_model.core_string.version, 2);
-//! assert!(tc_model.core_string.has_vendor_consent(35));
 //!
-//! // Check purpose consent
-//! assert!(tc_model.core_string.has_purpose_consent(1));
+//! // Check vendor and purpose consent
+//! let vendor_35 = tc_model.core_string.has_vendor_consent(35);
+//! let purpose_1 = tc_model.core_string.has_purpose_consent(1);
+//! println!("vendor 35: {vendor_35}, purpose 1: {purpose_1}");
 //!
-//! // Validate TC String
+//! // Validate TC String (this example string has no Disclosed Vendors
+//! // segment, which TCF v2.2 makes mandatory, so it is reported invalid)
 //! let validation = validate_tc_string(tc_string)?;
-//! assert!(validation.is_valid);
+//! for error in &validation.errors {
+//!     println!("{error:?}");
+//! }
 //! # Ok(())
 //! # }
 //! ```

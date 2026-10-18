@@ -43,9 +43,10 @@ pub enum Commands {
 }
 
 /// Output format for CLI commands
-#[derive(Debug, Clone, Copy, ValueEnum)]
+#[derive(Debug, Clone, Copy, ValueEnum, Default)]
 pub enum OutputFormat {
     /// Human-readable format with colors
+    #[default]
     Human,
     /// JSON format
     Json,
@@ -53,12 +54,6 @@ pub enum OutputFormat {
     Yaml,
     /// CSV format (for tabular data)
     Csv,
-}
-
-impl Default for OutputFormat {
-    fn default() -> Self {
-        Self::Human
-    }
 }
 
 impl OutputFormat {

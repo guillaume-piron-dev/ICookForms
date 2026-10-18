@@ -53,12 +53,3 @@ pub mod model_trainer {
         pub accuracy: f64,
     }
 }
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn test_training_module() {
-        // Placeholder test
-        assert!(true);
-    }
-}

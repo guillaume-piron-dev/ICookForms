@@ -18,17 +18,24 @@
 //! # Examples
 //!
 //! ```rust
-//! use icook_forms::compliance::iab_tcf::{decode_tc_string, encode_tc_string};
+//! use icookforms::compliance::iab_tcf::{decode_tc_string, encode_tc_string, SegmentUtils};
 //!
+//! # fn main() -> Result<(), Box<dyn std::error::Error>> {
 //! // Decode a TC String
 //! let tc_string = "COxSKBCOxSKCCBcABCENAgCMAPzAAEPAAAqIDaQBQAMgAgABqAR0A2gDaQAwAMgAgANoAAA";
-//! let tc_model = decode_tc_string(tc_string)?;
+//! let mut tc_model = decode_tc_string(tc_string)?;
 //!
 //! // Check consent
 //! let has_consent = tc_model.core_string.has_vendor_consent(35);
 //!
+//! // TCF v2.2 requires a Disclosed Vendors segment before encoding
+//! tc_model.disclosed_vendors = Some(SegmentUtils::create_disclosed_vendors(&[35]));
+//!
 //! // Encode back to TC String
 //! let encoded = encode_tc_string(&tc_model)?;
+//! assert!(decode_tc_string(&encoded)?.disclosed_vendors.is_some());
+//! # Ok(())
+//! # }
 //! ```
 //!
 //! Reference: IAB TCF v2.2 Specification
@@ -63,8 +70,10 @@ use super::{
 /// # Example
 ///
 /// ```rust
+/// # use icookforms::compliance::iab_tcf::decode_tc_string;
 /// let tc_model = decode_tc_string("COxSKBCOxSKCCBcABCENAgCMAPzAAEPAAAqIDaQBQAMgAgABqAR0A2gDaQAwAMgAgANoAAA")?;
 /// assert_eq!(tc_model.core_string.version, 2);
+/// # Ok::<(), Box<dyn std::error::Error>>(())
 /// ```
 #[must_use = "TC string decoding failure must be handled"]
 #[allow(clippy::cast_possible_truncation)] // Intentional truncation for IAB TCF spec compliance
@@ -125,7 +134,11 @@ pub fn decode_tc_string(tc_string: &str) -> Result<TCModel> {
 /// # Example
 ///
 /// ```rust
+/// # use icookforms::compliance::iab_tcf::{decode_tc_string, encode_tc_string, SegmentUtils};
+/// # let mut tc_model = decode_tc_string("COxSKBCOxSKCCBcABCENAgCMAPzAAEPAAAqIDaQBQAMgAgABqAR0A2gDaQAwAMgAgANoAAA")?;
+/// tc_model.disclosed_vendors = Some(SegmentUtils::create_disclosed_vendors(&[35]));
 /// let tc_string = encode_tc_string(&tc_model)?;
+/// # Ok::<(), Box<dyn std::error::Error>>(())
 /// ```
 #[must_use = "TC string encoding failure must be handled"]
 pub fn encode_tc_string(tc_model: &TCModel) -> Result<String> {

@@ -387,7 +387,7 @@ fn full_workflow_benchmark(c: &mut Criterion) {
 
     // Complete workflow: parse → analyze → check compliance → generate report
     group.bench_function("complete_workflow", |b| {
-        let cookie_strs = vec![
+        let cookie_strs = [
             "session=abc123; Secure; HttpOnly; SameSite=Strict",
             "_ga=GA1.2.123456789.987654321; Domain=.google.com",
             "tracking=xyz; Max-Age=31536000",

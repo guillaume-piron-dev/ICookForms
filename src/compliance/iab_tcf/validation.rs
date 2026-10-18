@@ -12,7 +12,7 @@
 //! # Examples
 //!
 //! ```rust
-//! use icook_forms::compliance::iab_tcf::validate_tc_string;
+//! use icookforms::compliance::iab_tcf::validate_tc_string;
 //!
 //! let tc_string = "COxSKBCOxSKCCBcABCENAgCMAPzAAEPAAAqIDaQBQAMgAgABqAR0A2gDaQAwAMgAgANoAAA";
 //! let result = validate_tc_string(tc_string)?;
@@ -172,9 +172,13 @@ pub enum ValidationWarning {
 /// # Example
 ///
 /// ```rust
-/// # use icook_forms::compliance::iab_tcf::validate_tc_string;
+/// # use icookforms::compliance::iab_tcf::validate_tc_string;
 /// let result = validate_tc_string("COxSKBCOxSKCCBcABCENAgCMAPzAAEPAAAqIDaQBQAMgAgABqAR0A2gDaQAwAMgAgANoAAA")?;
-/// assert!(result.is_valid);
+/// if !result.is_valid {
+///     for error in &result.errors {
+///         println!("{error:?}");
+///     }
+/// }
 /// # Ok::<(), Box<dyn std::error::Error>>(())
 /// ```
 #[must_use = "TC string validation result must be checked"]
@@ -235,7 +239,7 @@ pub fn validate_tc_string(tc_string: &str) -> Result<ValidationResult> {
 /// # Example
 ///
 /// ```rust,no_run
-/// # use icook_forms::compliance::iab_tcf::{validate_tc_string_with_gvl, GlobalVendorList};
+/// # use icookforms::compliance::iab_tcf::{validate_tc_string_with_gvl, GlobalVendorList};
 /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
 /// let gvl = GlobalVendorList::fetch_latest().await?;
 /// let result = validate_tc_string_with_gvl("COxSKBCOxSKCCBcABCENAgCMAPzAAEPAAAqIDaQBQAMgAgABqAR0A2gDaQAwAMgAgANoAAA", &gvl)?;

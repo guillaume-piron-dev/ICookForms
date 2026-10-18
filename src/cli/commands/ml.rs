@@ -205,6 +205,7 @@ fn execute_train(args: TrainArgs, format: OutputFormat) -> Result<()> {
 }
 
 /// Execute anomaly detection
+#[allow(clippy::too_many_lines)]
 fn execute_detect(args: DetectArgs, format: OutputFormat) -> Result<()> {
     println!("{}", "🔍 Detecting anomalies...".cyan().bold());
 

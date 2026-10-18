@@ -6,7 +6,7 @@ Command-line tool and Rust library for auditing HTTP cookies: security, regulato
 [![Documentation](https://docs.rs/icookforms/badge.svg)](https://docs.rs/icookforms)
 [![CI](https://img.shields.io/github/actions/workflow/status/guillaume-piron-dev/ICookForms/ci.yml?branch=main&label=CI)](https://github.com/guillaume-piron-dev/ICookForms/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)](https://www.rust-lang.org/)
+[![Rust](https://img.shields.io/badge/rust-1.83%2B-orange.svg)](https://www.rust-lang.org/)
 
 *[Version française](README.md)*
 
@@ -623,7 +623,7 @@ icookforms/
 
 ### Prerequisites
 
-- **Rust 1.75+** (2021 edition)
+- **Rust 1.83+** (2021 edition)
 - **Cargo**
 - **Git**
 - *(Optional)* **Docker**

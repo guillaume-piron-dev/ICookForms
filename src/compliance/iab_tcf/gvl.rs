@@ -7,7 +7,7 @@
 //! # Usage
 //!
 //! ```rust,no_run
-//! use icook_forms::compliance::iab_tcf::GlobalVendorList;
+//! use icookforms::compliance::iab_tcf::GlobalVendorList;
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -263,7 +263,7 @@ impl GlobalVendorList {
     /// # Example
     ///
     /// ```rust,no_run
-    /// # use icook_forms::compliance::iab_tcf::GlobalVendorList;
+    /// # use icookforms::compliance::iab_tcf::GlobalVendorList;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
     /// let gvl = GlobalVendorList::fetch_latest().await?;
     /// println!("GVL version: {}", gvl.vendor_list_version);
@@ -284,7 +284,7 @@ impl GlobalVendorList {
     /// # Example
     ///
     /// ```rust,no_run
-    /// # use icook_forms::compliance::iab_tcf::GlobalVendorList;
+    /// # use icookforms::compliance::iab_tcf::GlobalVendorList;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
     /// let gvl = GlobalVendorList::fetch_version(200).await?;
     /// # Ok(())
@@ -322,7 +322,7 @@ impl GlobalVendorList {
     /// # Example
     ///
     /// ```rust
-    /// # use icook_forms::compliance::iab_tcf::GlobalVendorList;
+    /// # use icookforms::compliance::iab_tcf::GlobalVendorList;
     /// let json = r#"{"gvlSpecificationVersion":2,"vendorListVersion":1,"tcfPolicyVersion":2,"lastUpdated":"2024-01-01T00:00:00Z","purposes":{},"specialPurposes":{},"features":{},"specialFeatures":{},"vendors":{}}"#;
     /// let gvl = GlobalVendorList::from_json(json)?;
     /// # Ok::<(), Box<dyn std::error::Error>>(())
@@ -346,7 +346,7 @@ impl GlobalVendorList {
     /// # Example
     ///
     /// ```rust
-    /// # use icook_forms::compliance::iab_tcf::GlobalVendorList;
+    /// # use icookforms::compliance::iab_tcf::GlobalVendorList;
     /// # let gvl = GlobalVendorList::from_json(r#"{"gvlSpecificationVersion":2,"vendorListVersion":1,"tcfPolicyVersion":2,"lastUpdated":"2024-01-01T00:00:00Z","purposes":{},"specialPurposes":{},"features":{},"specialFeatures":{},"vendors":{}}"#)?;
     /// if let Some(vendor) = gvl.get_vendor(35) {
     ///     println!("Found vendor: {}", vendor.name);
