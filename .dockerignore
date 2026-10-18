@@ -26,7 +26,6 @@ target/
 
 # Test files
 tests/
-benches/
 examples/
 
 # Reports and data

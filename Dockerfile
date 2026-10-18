@@ -19,9 +19,10 @@ COPY Cargo.toml Cargo.lock ./
 
 # Copy source code
 COPY src ./src
+COPY benches ./benches
 
 # Build for release with musl target for static linking
-RUN cargo build --release --target x86_64-unknown-linux-musl
+RUN cargo build --locked --release --target x86_64-unknown-linux-musl
 
 # Runtime stage
 FROM alpine:latest
