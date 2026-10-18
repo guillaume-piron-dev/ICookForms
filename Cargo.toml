@@ -42,7 +42,7 @@ rustls = "0.21"
 webpki-roots = "0.25"
 
 # Cookie parsing & handling
-biscotti = "0.1"
+biscotti = "0.4"
 cookie = "0.18"
 
 # Serialization
