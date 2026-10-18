@@ -2,7 +2,6 @@
 /target/
 **/*.rs.bk
 *.pdb
-Cargo.lock
 
 # IDE
 .vscode/
@@ -90,4 +89,3 @@ Desktop.ini
 
 # Cargo publish
 *.crate
-Cargo.lock

@@ -54,16 +54,16 @@ jobs:
       
       - name: Run clippy
         if: matrix.rust == 'stable'
-        run: cargo clippy --all-targets --all-features -- -D warnings
+        run: cargo clippy --locked --all-targets --all-features -- -D warnings
       
       - name: Build project
-        run: cargo build --verbose --all-features
+        run: cargo build --locked --verbose --all-features
       
       - name: Run tests
-        run: cargo test --verbose --all-features
+        run: cargo test --locked --verbose --all-features
       
       - name: Run doc tests
-        run: cargo test --doc --all-features
+        run: cargo test --locked --doc --all-features
   
   security-audit:
     name: Security Audit
@@ -96,7 +96,7 @@ jobs:
           toolchain: "1.83"
       
       - name: Check MSRV compatibility
-        run: cargo check --all-features
+        run: cargo check --locked --all-features
   
   build-release:
     name: Build Release Artifacts
@@ -134,7 +134,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y musl-tools
       
       - name: Build release binary
-        run: cargo build --release --target ${{ matrix.target }} --all-features
+        run: cargo build --locked --release --target ${{ matrix.target }} --all-features
       
       - name: Strip binary (Unix only)
         if: runner.os != 'Windows'

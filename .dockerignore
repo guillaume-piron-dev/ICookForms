@@ -23,7 +23,6 @@ CONTRIBUTING.md
 
 # Build artifacts
 target/
-Cargo.lock
 
 # Test files
 tests/
