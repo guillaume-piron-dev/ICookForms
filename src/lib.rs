@@ -1,18 +1,21 @@
-//! # `ICOokForms` - The World's Reference Cookie Audit Software
+//! # `ICOokForms` - HTTP cookie auditing
 //!
-//! `ICOokForms` is a comprehensive, enterprise-grade cookie analysis and audit tool
-//! designed to ensure security, compliance, and privacy for web applications.
+//! `ICOokForms` is a command-line tool and library for auditing HTTP cookies:
+//! security configuration, regulatory compliance and forensic analysis.
 //!
 //! ## Features
 //!
-//! - **Security Analysis**: Detect XSS, CSRF, Session Hijacking, and more
-//! - **Compliance Checking**: GDPR, CCPA, LGPD, and 50+ regulations
-//! - **RFC 6265 Compliance**: Full RFC 6265 and RFC 6265bis support
+//! - **Security Analysis**: Detect cookie configurations exposed to XSS, CSRF,
+//!   MITM, session fixation and session hijacking
+//! - **Compliance Checking**: Heuristic checks for GDPR, CCPA/CPRA, LGPD, PIPEDA,
+//!   POPIA and other regulations (not a substitute for a legal audit)
+//! - **RFC 6265 Parsing**: RFC 6265 and RFC 6265bis
 
 // Allow multiple crate versions - transitive dependencies from different crates
 #![allow(clippy::multiple_crate_versions)]
-//! - **🔥 Digital Forensics**: Timeline reconstruction, iOS binary parsing, GA analysis (UNIQUE!)
-//! - **🤖 ML/AI Anomaly Detection**: Machine learning-powered anomaly detection (UNIQUE!)
+//! - **Digital Forensics**: Timeline reconstruction, iOS/Safari binary cookie parsing,
+//!   Google Analytics cookie analysis, evidence collection
+//! - **Anomaly Detection** (experimental): Isolation Forest based anomaly detection
 
 // Temporary allowances for Excellence Achievement - Phase 1
 #![allow(clippy::struct_excessive_bools)]
@@ -32,9 +35,7 @@
 #![allow(clippy::case_sensitive_file_extension_comparisons)]
 #![allow(clippy::return_self_not_must_use)]
 #![allow(clippy::must_use_candidate)]
-//! - **Supply Chain Security**: Detect npm/PyPI vulnerabilities
-//! - **Real-time Monitoring**: Track cookies in real-time
-//! - **Comprehensive Reporting**: JSON, CSV, PDF, HTML exports
+//! - **Reporting**: JSON, CSV, PDF, HTML exports
 //!
 //! ## Quick Start
 //!
@@ -73,20 +74,18 @@
 //! - [`parser`]: RFC 6265 compliant cookie parsing
 //! - [`analyzer`]: Security and compliance analysis
 //! - [`compliance`]: GDPR, CCPA, and regulation checking
-//! - [`forensics`]: 🔥 **UNIQUE** - Digital forensics (timeline, iOS binary, GA analysis)
-//! - [`ml_analyzer`]: 🤖 **UNIQUE** - ML/AI anomaly detection (behavioral analysis, pattern recognition)
+//! - [`forensics`]: Digital forensics (timeline, iOS binary cookies, GA analysis)
+//! - [`ml_analyzer`]: Anomaly detection (behavioral analysis, pattern recognition)
 //! - [`reporter`]: Report generation (JSON, PDF, CSV, HTML)
 //! - [`types`]: Core types and data structures
 //!
-//! ## Safety and Performance
+//! ## Implementation
 //!
-//! `ICOokForms` is built with safety and performance in mind:
+//! Implementation notes:
 //!
-//! - Zero unsafe code (except in well-justified crypto operations)
-//! - Comprehensive error handling with `thiserror`
-//! - Async/await with Tokio runtime
-//! - Zero-copy parsing where possible
-//! - Concurrent analysis with Rayon
+//! - No `unsafe` code
+//! - Error handling with `thiserror`
+//! - Async/await with the Tokio runtime
 //!
 //! ## License
 //!

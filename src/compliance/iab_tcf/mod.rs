@@ -14,8 +14,7 @@
 //! - **Bit-level operations** - Efficient `BitReader` and `BitWriter`
 //! - **Global Vendor List integration** - Fetch and validate against GVL
 //! - **Comprehensive validation** - Check TC String conformity to spec
-//! - **RFC compliant** - Full IAB TCF v2.2 specification support
-//! - **Production-ready** - 95%+ test coverage, zero stubs
+//! - **IAB TCF v2.2** - Implements the TCF v2.2 TC String format
 //!
 //! ## Example
 //!
