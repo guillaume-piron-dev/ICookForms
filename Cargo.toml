@@ -78,7 +78,7 @@ publicsuffix = "2.2"
 # Cryptography
 sha2 = "0.10"
 hmac = "0.12"
-aes-gcm = "0.10"
+aes-gcm = "0.11"
 base64 = "0.21"
 hex = "0.4"
 subtle = "2.5"
