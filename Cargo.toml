@@ -105,7 +105,7 @@ ipnetwork = "0.20"
 # Security utilities
 ring = "0.17"
 constant_time_eq = "0.3"
-rand = "0.8"
+rand = "0.9"
 
 # UUID generation
 uuid = { version = "1.6", features = ["v4", "serde"] }
